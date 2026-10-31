@@ -2,7 +2,7 @@ import { useId, useState } from 'react'
 import { SMART_PEOPLE } from '../data/smartPeople'
 
 export function ScientistDirectory({ initialData = SMART_PEOPLE }) {
-  const [people] = useState(initialData)
+  const [people, setPeople] = useState(initialData)
   const [query, setQuery] = useState('')
   const [minIq, setMinIq] = useState(160)
   const [sortBy, setSortBy] = useState('iq-desc')
@@ -24,6 +24,16 @@ export function ScientistDirectory({ initialData = SMART_PEOPLE }) {
         ? b.iq - a.iq
         : a.age - b.age,
     )
+
+  function handleDelete(id) {
+    setPeople((previousPeople) =>
+      previousPeople.filter((person) => person.id !== id),
+    )
+  }
+
+  function handleReset() {
+    setPeople(initialData)
+  }
 
   return (
     <section aria-labelledby="directory-title">
@@ -70,10 +80,32 @@ export function ScientistDirectory({ initialData = SMART_PEOPLE }) {
         </p>
       </form>
 
+      <button
+        type="button"
+        onClick={handleReset}
+      >
+        Reset
+      </button>
+
+      <output
+        role="status"
+        aria-live="polite"
+      >
+        Found {visiblePeople.length} pioneers
+      </output>
+
       <ul>
         {visiblePeople.map((person) => (
           <li key={person.id}>
-            {person.name} - Age {person.age} - IQ {person.iq}
+            <span>
+              {person.name} - Age {person.age} - IQ {person.iq}
+            </span>{' '}
+            <button
+              type="button"
+              onClick={() => handleDelete(person.id)}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
